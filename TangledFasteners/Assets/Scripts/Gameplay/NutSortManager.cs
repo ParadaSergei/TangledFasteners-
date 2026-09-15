@@ -32,7 +32,7 @@ namespace TangledFasteners
                 if (clickedBolt != null && !clickedBolt.IsEmpty)
                 {
                     selectedBolt = clickedBolt;
-                    HighlightBolt(selectedBolt, true);
+                    HighlightBoltGroup(selectedBolt, true);
                     AudioManager.Instance?.PlaySound(SoundType.Pick);
                 }
             }
@@ -41,7 +41,7 @@ namespace TangledFasteners
                 // Second tap: deselect or transfer
                 if (selectedBolt == clickedBolt)
                 {
-                    HighlightBolt(selectedBolt, false);
+                    HighlightBoltGroup(selectedBolt, false);
                     selectedBolt = null;
                 }
                 else
@@ -51,14 +51,21 @@ namespace TangledFasteners
             }
         }
 
-        private void HighlightBolt(BoltPeg bolt, bool highlight)
+        private void HighlightBoltGroup(BoltPeg bolt, bool highlight)
         {
-            if (bolt == null || bolt.TopNut == null) return;
+            if (bolt == null || bolt.IsEmpty) return;
+            List<Nut> group = bolt.GetConsecutiveTopNutsOfSameColor();
+
             Vector3 basePos = bolt.baseTransform != null ? bolt.baseTransform.position : bolt.transform.position;
-            int nutIndex = bolt.stackedNuts.Count - 1;
-            Vector3 normalPos = basePos + Vector3.up * (nutIndex * bolt.nutHeight + 0.3f);
-            Vector3 targetPos = normalPos + (highlight ? Vector3.up * 0.4f : Vector3.zero);
-            bolt.TopNut.transform.position = targetPos;
+            int startIndex = bolt.stackedNuts.Count - group.Count;
+
+            for (int i = 0; i < group.Count; i++)
+            {
+                Nut nut = bolt.stackedNuts[startIndex + i];
+                Vector3 normalPos = basePos + Vector3.up * ((startIndex + i) * bolt.nutHeight + 0.3f);
+                Vector3 targetPos = normalPos + (highlight ? Vector3.up * 0.4f : Vector3.zero);
+                nut.transform.position = targetPos;
+            }
         }
 
         private void TryTransferNuts(BoltPeg source, BoltPeg target)
@@ -72,13 +79,14 @@ namespace TangledFasteners
 
             BoltColorType movingColor = movingNuts[0].colorType;
 
-            // Target validity check
+            // Target validity check: cannot transfer if target is full
             if (target.IsFull)
             {
                 Deselect(source);
                 return;
             }
 
+            // Target validity check: if target is not empty, top nut color must match moving color
             if (!target.IsEmpty && target.TopNut.colorType != movingColor)
             {
                 Deselect(source);
@@ -95,10 +103,12 @@ namespace TangledFasteners
                 return;
             }
 
+            // Select bottom-to-top nuts from the matching group
             List<Nut> nutsToTransfer = new List<Nut>();
+            int startIndex = source.stackedNuts.Count - countToMove;
             for (int i = 0; i < countToMove; i++)
             {
-                nutsToTransfer.Add(movingNuts[i]);
+                nutsToTransfer.Add(source.stackedNuts[startIndex + i]);
             }
 
             StartCoroutine(AnimateTransferGroup(source, target, nutsToTransfer));
@@ -106,14 +116,14 @@ namespace TangledFasteners
 
         private void Deselect(BoltPeg source)
         {
-            HighlightBolt(source, false);
+            HighlightBoltGroup(source, false);
             selectedBolt = null;
         }
 
         private IEnumerator AnimateTransferGroup(BoltPeg source, BoltPeg target, List<Nut> nuts)
         {
             isBusy = true;
-            HighlightBolt(source, false);
+            HighlightBoltGroup(source, false);
             selectedBolt = null;
 
             Vector3 sourceLift = source.GetLiftPosition();
