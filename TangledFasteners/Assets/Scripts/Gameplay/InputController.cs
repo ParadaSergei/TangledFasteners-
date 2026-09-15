@@ -26,14 +26,21 @@ namespace TangledFasteners
 
         private void HandleTap(Vector2 screenPosition)
         {
+            if (mainCamera == null) mainCamera = Camera.main;
             if (mainCamera == null) return;
 
             Ray ray = mainCamera.ScreenPointToRay(screenPosition);
             RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
 
-            // Sort hits by distance or prioritize Bolt
             foreach (var hit in hits)
             {
+                BoltPeg peg = hit.collider.GetComponentInParent<BoltPeg>();
+                if (peg != null)
+                {
+                    NutSortManager.Instance?.OnBoltClicked(peg);
+                    break;
+                }
+
                 Bolt bolt = hit.collider.GetComponentInParent<Bolt>();
                 if (bolt != null)
                 {
