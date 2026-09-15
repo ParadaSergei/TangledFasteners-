@@ -50,25 +50,26 @@ namespace TangledFasteners
 
             List<BoltPeg> createdBolts = new List<BoltPeg>();
 
-            bool createdTempBoltPrefab = false;
-            if (boltPrefab == null)
+            GameObject effectiveBoltPrefab = boltPrefab;
+            if (effectiveBoltPrefab == null)
             {
-                boltPrefab = CreateDefaultBoltMesh(boltCapacity);
-                createdTempBoltPrefab = true;
+                effectiveBoltPrefab = Resources.Load<GameObject>("Prefabs/Bolt");
             }
 
-            bool createdTempNutPrefab = false;
-            if (nutPrefab == null)
+            GameObject effectiveNutPrefab = nutPrefab;
+            if (effectiveNutPrefab == null)
             {
-                nutPrefab = CreateDefaultNutMesh();
-                createdTempNutPrefab = true;
+                effectiveNutPrefab = Resources.Load<GameObject>("Prefabs/Gaika");
             }
 
             // 3. Instantiate Bolts
             for (int i = 0; i < totalBolts; i++)
             {
                 Vector3 pos = new Vector3(startX + i * spacing, -2.2f, 0f);
-                GameObject bObj = Instantiate(boltPrefab, pos, Quaternion.identity, levelContainer);
+                GameObject bObj = effectiveBoltPrefab != null
+                    ? Instantiate(effectiveBoltPrefab, pos, Quaternion.identity, levelContainer)
+                    : CreateDefaultBoltMesh(boltCapacity, pos, levelContainer);
+
                 bObj.name = $"BoltPeg_{i + 1}";
 
                 BoltPeg peg = bObj.GetComponent<BoltPeg>();
@@ -80,13 +81,6 @@ namespace TangledFasteners
                 {
                     NutSortManager.Instance.bolts.Add(peg);
                 }
-            }
-
-            if (createdTempBoltPrefab)
-            {
-                if (Application.isPlaying) Destroy(boltPrefab);
-                else DestroyImmediate(boltPrefab);
-                boltPrefab = null;
             }
 
             // 4. Create Nut Distribution
@@ -127,9 +121,11 @@ namespace TangledFasteners
                     BoltColorType color = nutList[nutIndex++];
                     Vector3 nutPos = createdBolts[b].GetTopSlotPosition();
 
-                    GameObject nObj = Instantiate(nutPrefab, nutPos, Quaternion.identity, levelContainer);
+                    GameObject nObj = effectiveNutPrefab != null
+                        ? Instantiate(effectiveNutPrefab, nutPos, Quaternion.identity, levelContainer)
+                        : CreateDefaultNutMesh(nutPos, levelContainer);
+
                     nObj.name = $"Nut_{color}";
-                    nObj.transform.localScale = new Vector3(0.9f, 0.2f, 0.9f);
 
                     Nut nut = nObj.GetComponent<Nut>();
                     if (nut == null) nut = nObj.AddComponent<Nut>();
@@ -139,22 +135,17 @@ namespace TangledFasteners
                     createdBolts[b].AddNut(nut);
                 }
             }
-
-            if (createdTempNutPrefab)
-            {
-                if (Application.isPlaying) Destroy(nutPrefab);
-                else DestroyImmediate(nutPrefab);
-                nutPrefab = null;
-            }
         }
 
-        private GameObject CreateDefaultBoltMesh(int capacity)
+        private GameObject CreateDefaultBoltMesh(int capacity, Vector3 pos, Transform parentTransform)
         {
             GameObject parent = new GameObject("DefaultBoltPegTemplate");
+            parent.transform.position = pos;
+            parent.transform.SetParent(parentTransform);
+
             GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             cylinder.transform.SetParent(parent.transform);
 
-            // Scale height of bolt according to capacity
             float boltHeightScale = capacity * 0.45f;
             cylinder.transform.localPosition = new Vector3(0, boltHeightScale, 0);
             cylinder.transform.localScale = new Vector3(0.3f, boltHeightScale, 0.3f);
@@ -169,10 +160,12 @@ namespace TangledFasteners
             return parent;
         }
 
-        private GameObject CreateDefaultNutMesh()
+        private GameObject CreateDefaultNutMesh(Vector3 pos, Transform parentTransform)
         {
             GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             cylinder.name = "DefaultNutTemplate";
+            cylinder.transform.position = pos;
+            cylinder.transform.SetParent(parentTransform);
             cylinder.transform.localScale = new Vector3(0.9f, 0.2f, 0.9f);
 
             Collider col = cylinder.GetComponent<Collider>();

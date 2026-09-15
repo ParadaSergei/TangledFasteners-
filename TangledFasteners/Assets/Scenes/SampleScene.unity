@@ -3580,8 +3580,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5323b176a83f7c4d80a82fd7764d36f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TangledFasteners.LevelGenerator
-  boltPrefab: {fileID: 0}
-  nutPrefab: {fileID: 0}
+  boltPrefab: {fileID: 4072245019496503880, guid: 6e10aa6549194cc0a1fadb688c08f9a0, type: 3}
+  nutPrefab: {fileID: 4531017371912111926, guid: 801d595f75fd423e8f5dbea65c07dbf9, type: 3}
   levelContainer: {fileID: 374741807}
 --- !u!114 &1796534583
 MonoBehaviour:
