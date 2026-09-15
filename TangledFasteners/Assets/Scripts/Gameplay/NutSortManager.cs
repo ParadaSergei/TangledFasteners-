@@ -22,6 +22,13 @@ namespace TangledFasteners
             Instance = this;
         }
 
+        public void ResetState()
+        {
+            isBusy = false;
+            selectedBolt = null;
+            bolts.Clear();
+        }
+
         public void OnBoltClicked(BoltPeg clickedBolt)
         {
             if (isBusy) return;
@@ -62,7 +69,7 @@ namespace TangledFasteners
             for (int i = 0; i < group.Count; i++)
             {
                 Nut nut = bolt.stackedNuts[startIndex + i];
-                Vector3 normalPos = basePos + Vector3.up * ((startIndex + i) * bolt.nutHeight + 0.3f);
+                Vector3 normalPos = basePos + Vector3.up * ((startIndex + i) * bolt.nutHeight + 0.25f);
                 Vector3 targetPos = normalPos + (highlight ? Vector3.up * 0.4f : Vector3.zero);
                 nut.transform.position = targetPos;
             }
@@ -103,12 +110,11 @@ namespace TangledFasteners
                 return;
             }
 
-            // Select bottom-to-top nuts from the matching group
+            // Top-to-bottom transfer list (topmost nut moves first so nuts don't clip through each other)
             List<Nut> nutsToTransfer = new List<Nut>();
-            int startIndex = source.stackedNuts.Count - countToMove;
             for (int i = 0; i < countToMove; i++)
             {
-                nutsToTransfer.Add(source.stackedNuts[startIndex + i]);
+                nutsToTransfer.Add(movingNuts[i]);
             }
 
             StartCoroutine(AnimateTransferGroup(source, target, nutsToTransfer));
@@ -146,12 +152,23 @@ namespace TangledFasteners
 
         public void CheckWinCondition()
         {
+            Dictionary<BoltColorType, int> colorPegCounts = new Dictionary<BoltColorType, int>();
+
             foreach (var bolt in bolts)
             {
-                if (!bolt.IsEmpty && !bolt.IsSingleColorAndFull())
+                if (bolt.IsEmpty) continue;
+
+                if (!bolt.IsSingleColor())
                 {
-                    return; // Level not solved yet
+                    return; // Peg contains mixed colors
                 }
+
+                BoltColorType color = bolt.TopNut.colorType;
+                if (colorPegCounts.ContainsKey(color))
+                {
+                    return; // Same color split across multiple pegs
+                }
+                colorPegCounts[color] = 1;
             }
 
             Debug.Log("LEVEL SOLVED!");

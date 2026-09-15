@@ -21,7 +21,21 @@ namespace TangledFasteners
             if (meshRenderer == null) meshRenderer = GetComponentInChildren<Renderer>();
             if (meshRenderer != null)
             {
-                meshRenderer.material.color = Bolt.GetColor(colorType);
+                meshRenderer.material.color = GetColor(colorType);
+            }
+        }
+
+        public static Color GetColor(BoltColorType type)
+        {
+            switch (type)
+            {
+                case BoltColorType.Red: return Color.red;
+                case BoltColorType.Blue: return Color.blue;
+                case BoltColorType.Green: return Color.green;
+                case BoltColorType.Yellow: return Color.yellow;
+                case BoltColorType.Purple: return new Color(0.5f, 0f, 0.5f);
+                case BoltColorType.Orange: return new Color(1f, 0.5f, 0f);
+                default: return Color.white;
             }
         }
 

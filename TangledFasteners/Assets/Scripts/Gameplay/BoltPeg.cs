@@ -6,7 +6,7 @@ namespace TangledFasteners
     public class BoltPeg : MonoBehaviour
     {
         public int capacity = 4; // Length of the bolt (number of nuts it can hold)
-        public float nutHeight = 0.5f;
+        public float nutHeight = 0.45f;
         public Transform baseTransform;
         public List<Nut> stackedNuts = new List<Nut>();
 
@@ -18,7 +18,7 @@ namespace TangledFasteners
         public Vector3 GetTopSlotPosition()
         {
             Vector3 basePos = baseTransform != null ? baseTransform.position : transform.position;
-            return basePos + Vector3.up * (stackedNuts.Count * nutHeight + 0.3f);
+            return basePos + Vector3.up * (stackedNuts.Count * nutHeight + 0.25f);
         }
 
         public Vector3 GetLiftPosition()
@@ -50,7 +50,6 @@ namespace TangledFasteners
         public void AddNut(Nut nut)
         {
             stackedNuts.Add(nut);
-            nut.transform.SetParent(transform);
         }
 
         public void RemoveNut(Nut nut)
@@ -58,9 +57,9 @@ namespace TangledFasteners
             stackedNuts.Remove(nut);
         }
 
-        public bool IsSingleColorAndFull()
+        public bool IsSingleColor()
         {
-            if (!IsFull) return false;
+            if (IsEmpty) return true;
             BoltColorType firstColor = stackedNuts[0].colorType;
             foreach (var nut in stackedNuts)
             {

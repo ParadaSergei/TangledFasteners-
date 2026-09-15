@@ -40,13 +40,6 @@ namespace TangledFasteners
                     NutSortManager.Instance?.OnBoltClicked(peg);
                     break;
                 }
-
-                Bolt bolt = hit.collider.GetComponentInParent<Bolt>();
-                if (bolt != null)
-                {
-                    GameManager.Instance?.TryProcessBoltClick(bolt);
-                    break;
-                }
             }
         }
     }
