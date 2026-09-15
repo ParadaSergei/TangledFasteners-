@@ -1,0 +1,46 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace TangledFasteners
+{
+    public class InputController : MonoBehaviour
+    {
+        public Camera mainCamera;
+
+        private void Start()
+        {
+            if (mainCamera == null)
+            {
+                mainCamera = Camera.main;
+            }
+        }
+
+        private void Update()
+        {
+            if (Pointer.current != null && Pointer.current.press.wasPressedThisFrame)
+            {
+                Vector2 touchPosition = Pointer.current.position.ReadValue();
+                HandleTap(touchPosition);
+            }
+        }
+
+        private void HandleTap(Vector2 screenPosition)
+        {
+            if (mainCamera == null) return;
+
+            Ray ray = mainCamera.ScreenPointToRay(screenPosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray, 100f);
+
+            // Sort hits by distance or prioritize Bolt
+            foreach (var hit in hits)
+            {
+                Bolt bolt = hit.collider.GetComponentInParent<Bolt>();
+                if (bolt != null)
+                {
+                    GameManager.Instance?.TryProcessBoltClick(bolt);
+                    break;
+                }
+            }
+        }
+    }
+}
