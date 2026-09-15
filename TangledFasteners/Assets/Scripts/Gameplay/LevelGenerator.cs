@@ -65,7 +65,7 @@ namespace TangledFasteners
             // 3. Instantiate Bolts
             for (int i = 0; i < totalBolts; i++)
             {
-                Vector3 pos = new Vector3(startX + i * spacing, -2.2f, 0f);
+                Vector3 pos = new Vector3(startX + i * spacing, 0f, 0f);
                 GameObject bObj = effectiveBoltPrefab != null
                     ? Instantiate(effectiveBoltPrefab, pos, Quaternion.identity, levelContainer)
                     : CreateDefaultBoltMesh(boltCapacity, pos, levelContainer);
