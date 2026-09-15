@@ -41,38 +41,44 @@ namespace TangledFasteners
 
         public IEnumerator MoveToPosition(Vector3 startPos, Vector3 topLiftPos, Vector3 targetLiftPos, Vector3 finalPos, System.Action onComplete = null)
         {
-            float duration = 0.15f;
+            float duration = 0.25f;
             float elapsed = 0f;
 
-            // Step 1: Up
+            // Step 1: Unscrew Lift (Move up higher + twist rotation)
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                transform.position = Vector3.Lerp(startPos, topLiftPos, elapsed / duration);
+                float t = elapsed / duration;
+                transform.position = Vector3.Lerp(startPos, topLiftPos, t);
+                transform.Rotate(Vector3.up, 720f * Time.deltaTime, Space.Self);
                 yield return null;
             }
 
-            // Step 2: Across
+            // Step 2: Across to target bolt
             elapsed = 0f;
             duration = 0.2f;
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                transform.position = Vector3.Lerp(topLiftPos, targetLiftPos, elapsed / duration);
+                float t = elapsed / duration;
+                transform.position = Vector3.Lerp(topLiftPos, targetLiftPos, t);
                 yield return null;
             }
 
-            // Step 3: Down
+            // Step 3: Screw Down onto target peg (Move down + reverse twist rotation)
             elapsed = 0f;
-            duration = 0.15f;
+            duration = 0.25f;
             while (elapsed < duration)
             {
                 elapsed += Time.deltaTime;
-                transform.position = Vector3.Lerp(targetLiftPos, finalPos, elapsed / duration);
+                float t = elapsed / duration;
+                transform.position = Vector3.Lerp(targetLiftPos, finalPos, t);
+                transform.Rotate(Vector3.up, -720f * Time.deltaTime, Space.Self);
                 yield return null;
             }
 
             transform.position = finalPos;
+            transform.rotation = Quaternion.identity;
             onComplete?.Invoke();
         }
     }

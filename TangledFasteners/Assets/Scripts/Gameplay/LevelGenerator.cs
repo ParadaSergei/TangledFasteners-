@@ -39,13 +39,13 @@ namespace TangledFasteners
                 }
             }
 
-            // 2. Calculate difficulty parameters per level
+            // 2. Calculate difficulty parameters per level (More nuts & colors per level)
             int totalColors = Mathf.Clamp(2 + (levelNumber - 1) / 2, 2, 5);
-            int boltCapacity = Mathf.Clamp(2 + (levelNumber - 1) / 3, 2, 5);
+            int boltCapacity = Mathf.Clamp(4 + (levelNumber - 1), 4, 7); // Increased nut capacity (4 to 7 nuts per bolt)
             int totalBolts = totalColors + 2; // Extra empty bolts for sorting moves
 
             // Equal spacing calculation
-            float spacing = 2.2f;
+            float spacing = 2.4f;
             float startX = -((totalBolts - 1) * spacing) / 2f;
 
             List<BoltPeg> createdBolts = new List<BoltPeg>();
@@ -53,7 +53,7 @@ namespace TangledFasteners
             bool createdTempBoltPrefab = false;
             if (boltPrefab == null)
             {
-                boltPrefab = CreateDefaultBoltMesh();
+                boltPrefab = CreateDefaultBoltMesh(boltCapacity);
                 createdTempBoltPrefab = true;
             }
 
@@ -67,7 +67,7 @@ namespace TangledFasteners
             // 3. Instantiate Bolts
             for (int i = 0; i < totalBolts; i++)
             {
-                Vector3 pos = new Vector3(startX + i * spacing, -1.5f, 0f);
+                Vector3 pos = new Vector3(startX + i * spacing, -2.2f, 0f);
                 GameObject bObj = Instantiate(boltPrefab, pos, Quaternion.identity, levelContainer);
                 bObj.name = $"BoltPeg_{i + 1}";
 
@@ -113,7 +113,7 @@ namespace TangledFasteners
                 nutList[rnd] = temp;
             }
 
-            // Distribute nuts evenly across the first (totalBolts - 1) bolts so all bolts participate
+            // Distribute nuts evenly across filled bolts
             int filledBoltsCount = totalBolts - 1;
             int nutIndex = 0;
 
@@ -148,13 +148,16 @@ namespace TangledFasteners
             }
         }
 
-        private GameObject CreateDefaultBoltMesh()
+        private GameObject CreateDefaultBoltMesh(int capacity)
         {
             GameObject parent = new GameObject("DefaultBoltPegTemplate");
             GameObject cylinder = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
             cylinder.transform.SetParent(parent.transform);
-            cylinder.transform.localPosition = new Vector3(0, 1.2f, 0);
-            cylinder.transform.localScale = new Vector3(0.3f, 1.2f, 0.3f);
+
+            // Scale height of bolt according to capacity
+            float boltHeightScale = capacity * 0.45f;
+            cylinder.transform.localPosition = new Vector3(0, boltHeightScale, 0);
+            cylinder.transform.localScale = new Vector3(0.3f, boltHeightScale, 0.3f);
 
             GameObject baseCube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             baseCube.transform.SetParent(parent.transform);
@@ -172,7 +175,6 @@ namespace TangledFasteners
             cylinder.name = "DefaultNutTemplate";
             cylinder.transform.localScale = new Vector3(0.9f, 0.2f, 0.9f);
 
-            // Remove primitive collider from nut so physical collision never gets stuck or clips
             Collider col = cylinder.GetComponent<Collider>();
             if (col != null) DestroyImmediate(col);
 

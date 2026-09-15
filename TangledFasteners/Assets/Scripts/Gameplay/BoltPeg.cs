@@ -5,7 +5,7 @@ namespace TangledFasteners
 {
     public class BoltPeg : MonoBehaviour
     {
-        public int capacity = 4; // Length of the bolt (number of nuts it can hold)
+        public int capacity = 5; // Length of the bolt (number of nuts it can hold)
         public float nutHeight = 0.45f;
         public Transform baseTransform;
         public List<Nut> stackedNuts = new List<Nut>();
@@ -24,7 +24,8 @@ namespace TangledFasteners
         public Vector3 GetLiftPosition()
         {
             Vector3 basePos = baseTransform != null ? baseTransform.position : transform.position;
-            return basePos + Vector3.up * ((capacity + 1.2f) * nutHeight + 0.3f);
+            // Higher lift altitude above top of bolt thread to clearly clear the bolt
+            return basePos + Vector3.up * ((capacity + 2.2f) * nutHeight + 1.2f);
         }
 
         public List<Nut> GetConsecutiveTopNutsOfSameColor()
