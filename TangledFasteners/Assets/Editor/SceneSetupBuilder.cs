@@ -39,6 +39,9 @@ namespace TangledFasteners.Editor
             GameObject managers = new GameObject("Managers");
             NutSortManager nsm = managers.AddComponent<NutSortManager>();
             LevelGenerator gen = managers.AddComponent<LevelGenerator>();
+            gen.boltPrefab = Resources.Load<GameObject>("Prefabs/Bolt");
+            gen.nutPrefab = Resources.Load<GameObject>("Prefabs/Gaika");
+
             LevelManager lm = managers.AddComponent<LevelManager>();
             AudioManager am = managers.AddComponent<AudioManager>();
             InputController input = managers.AddComponent<InputController>();
