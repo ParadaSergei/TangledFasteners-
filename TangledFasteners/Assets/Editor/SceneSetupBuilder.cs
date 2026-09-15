@@ -25,6 +25,8 @@ namespace TangledFasteners.Editor
             mainCam.transform.rotation = Quaternion.identity;
             mainCam.orthographic = true;
             mainCam.orthographicSize = 6.5f;
+            mainCam.clearFlags = CameraClearFlags.SolidColor;
+            mainCam.backgroundColor = new Color(0.2f, 0.21f, 0.23f);
 
             Light dirLight = Object.FindFirstObjectByType<Light>();
             if (dirLight == null)
