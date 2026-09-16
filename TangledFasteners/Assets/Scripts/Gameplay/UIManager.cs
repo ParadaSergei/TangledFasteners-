@@ -98,6 +98,11 @@ namespace TangledFasteners
 
         private void OnContinueClicked()
         {
+            if (levelCompletePanel != null && !levelCompletePanel.activeSelf)
+            {
+                return;
+            }
+            HideLevelCompletePanel();
             LevelManager.Instance?.NextLevel();
         }
     }

@@ -47,11 +47,18 @@ namespace TangledFasteners
             UIManager.Instance?.HideLevelCompletePanel();
         }
 
+        private bool isChangingLevel;
+
         public void NextLevel()
         {
+            if (isChangingLevel) return;
+            isChangingLevel = true;
+
             currentLevel++;
             LoadCurrentLevel();
             UIManager.Instance?.HideLevelCompletePanel();
+
+            isChangingLevel = false;
         }
 
         public void LoadSceneByName(string sceneName)
