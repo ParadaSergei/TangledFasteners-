@@ -13,11 +13,15 @@ namespace TangledFasteners
         public TextMeshProUGUI movesText;
         public Button restartButton;
         public Image restartButtonImage;
+        public TextMeshProUGUI restartButtonText;
         public Button soundButton;
         public Image soundButtonImage;
         public Sprite soundOnSprite;
         public Sprite soundOffSprite;
         public TextMeshProUGUI soundButtonText;
+        public Button languageButton;
+        public Image languageButtonImage;
+        public TextMeshProUGUI languageButtonText;
 
         [Header("Victory Popup UI")]
         public GameObject levelCompletePanel;
@@ -25,6 +29,7 @@ namespace TangledFasteners
         public TextMeshProUGUI winTitleText;
         public Button continueButton;
         public Image continueButtonImage;
+        public TextMeshProUGUI continueButtonText;
 
         private void Awake()
         {
@@ -50,6 +55,12 @@ namespace TangledFasteners
                 soundButton.onClick.AddListener(OnSoundToggleClicked);
             }
 
+            if (languageButton != null)
+            {
+                languageButton.onClick.RemoveAllListeners();
+                languageButton.onClick.AddListener(OnLanguageToggleClicked);
+            }
+
             if (continueButton != null)
             {
                 continueButton.onClick.RemoveAllListeners();
@@ -59,9 +70,58 @@ namespace TangledFasteners
             if (levelCompletePanel != null)
                 levelCompletePanel.SetActive(false);
 
+            UpdateAllTexts();
+        }
+
+        public void UpdateAllTexts()
+        {
+            bool isRu = LevelManager.Instance == null || LevelManager.Instance.currentLanguage == "ru";
+
+            int level = LevelManager.Instance != null ? LevelManager.Instance.currentLevel : 1;
+            UpdateLevelText(level);
+
+            int moves = NutSortManager.Instance != null ? NutSortManager.Instance.moveCount : 0;
+            UpdateMoveCount(moves);
+
             if (AudioManager.Instance != null)
             {
                 UpdateSoundButtonUI(AudioManager.Instance.IsMuted);
+            }
+            else if (soundButtonText != null)
+            {
+                soundButtonText.text = isRu ? "Звук: ВКЛ" : "Sound: ON";
+            }
+
+            if (restartButtonText == null && restartButton != null)
+            {
+                restartButtonText = restartButton.GetComponentInChildren<TextMeshProUGUI>();
+            }
+            if (restartButtonText != null)
+            {
+                restartButtonText.text = isRu ? "Рестарт" : "Restart";
+            }
+
+            if (winTitleText != null)
+            {
+                winTitleText.text = isRu ? "Уровень пройден" : "Level Completed";
+            }
+
+            if (continueButtonText == null && continueButton != null)
+            {
+                continueButtonText = continueButton.GetComponentInChildren<TextMeshProUGUI>();
+            }
+            if (continueButtonText != null)
+            {
+                continueButtonText.text = isRu ? "Продолжить" : "Continue";
+            }
+
+            if (languageButtonText == null && languageButton != null)
+            {
+                languageButtonText = languageButton.GetComponentInChildren<TextMeshProUGUI>();
+            }
+            if (languageButtonText != null)
+            {
+                languageButtonText.text = isRu ? "Язык: RU" : "Lang: EN";
             }
         }
 
@@ -69,7 +129,8 @@ namespace TangledFasteners
         {
             if (levelText != null)
             {
-                levelText.text = $"Уровень {level}";
+                bool isRu = LevelManager.Instance == null || LevelManager.Instance.currentLanguage == "ru";
+                levelText.text = isRu ? $"Уровень {level}" : $"Level {level}";
             }
         }
 
@@ -77,7 +138,8 @@ namespace TangledFasteners
         {
             if (movesText != null)
             {
-                movesText.text = $"Ходы: {moves}";
+                bool isRu = LevelManager.Instance == null || LevelManager.Instance.currentLanguage == "ru";
+                movesText.text = isRu ? $"Ходы: {moves}" : $"Moves: {moves}";
             }
         }
 
@@ -97,7 +159,8 @@ namespace TangledFasteners
 
             if (soundButtonText != null)
             {
-                soundButtonText.text = isMuted ? "Звук: ВЫКЛ" : "Звук: ВКЛ";
+                bool isRu = LevelManager.Instance == null || LevelManager.Instance.currentLanguage == "ru";
+                soundButtonText.text = isRu ? (isMuted ? "Звук: ВЫКЛ" : "Звук: ВКЛ") : (isMuted ? "Sound: OFF" : "Sound: ON");
             }
         }
 
@@ -127,6 +190,11 @@ namespace TangledFasteners
         private void OnSoundToggleClicked()
         {
             AudioManager.Instance?.ToggleSound();
+        }
+
+        private void OnLanguageToggleClicked()
+        {
+            LevelManager.Instance?.ChangeLanguage();
         }
 
         private void OnContinueClicked()

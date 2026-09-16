@@ -167,25 +167,41 @@ namespace TangledFasteners.Editor
                 topBar.transform,
                 "RestartButton",
                 "Рестарт",
-                new Vector2(-360, 0),
-                new Vector2(220, 90),
+                new Vector2(-380, 0),
+                new Vector2(180, 90),
                 retryButtonSprite,
                 ruslanFontAsset,
-                32
+                28
             );
             uiManager.restartButton = restartBtnObj.GetComponent<Button>();
             uiManager.restartButtonImage = restartBtnObj.GetComponent<Image>();
+            uiManager.restartButtonText = restartBtnObj.GetComponentInChildren<TextMeshProUGUI>();
+
+            // Language Button
+            GameObject langBtnObj = CreateButton(
+                topBar.transform,
+                "LanguageButton",
+                "Язык: RU",
+                new Vector2(190, 0),
+                new Vector2(180, 90),
+                retryButtonSprite,
+                ruslanFontAsset,
+                24
+            );
+            uiManager.languageButton = langBtnObj.GetComponent<Button>();
+            uiManager.languageButtonImage = langBtnObj.GetComponent<Image>();
+            uiManager.languageButtonText = langBtnObj.GetComponentInChildren<TextMeshProUGUI>();
 
             // Sound Button (uses sound on / sound off sprite from UI_Package)
             GameObject soundBtnObj = CreateButton(
                 topBar.transform,
                 "SoundButton",
                 "Звук: ВКЛ",
-                new Vector2(360, 0),
-                new Vector2(220, 90),
+                new Vector2(380, 0),
+                new Vector2(180, 90),
                 soundOnSprite,
                 ruslanFontAsset,
-                28
+                24
             );
             uiManager.soundButton = soundBtnObj.GetComponent<Button>();
             uiManager.soundButtonImage = soundBtnObj.GetComponent<Image>();
@@ -252,6 +268,7 @@ namespace TangledFasteners.Editor
             );
             uiManager.continueButton = continueBtnObj.GetComponent<Button>();
             uiManager.continueButtonImage = continueBtnObj.GetComponent<Image>();
+            uiManager.continueButtonText = continueBtnObj.GetComponentInChildren<TextMeshProUGUI>();
             uiManager.levelCompletePanel = winPanel;
 
             // Event System for UI interactions
