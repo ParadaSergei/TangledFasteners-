@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 namespace TangledFasteners
@@ -8,6 +9,12 @@ namespace TangledFasteners
         public static LevelManager Instance { get; private set; }
 
         public LevelGenerator levelGenerator;
+        [SerializeField] private GameObject buttonSound;
+        [SerializeField] private Sprite buttonSpriteOn;
+        [SerializeField] private Sprite buttonSpriteOff;
+
+        public AudioSource audio;
+
         public int currentLevel = 1;
 
         private void Awake()
@@ -22,6 +29,7 @@ namespace TangledFasteners
 
         private void Start()
         {
+            audio = gameObject.GetComponent<AudioSource>();
             LoadCurrentLevel();
         }
 
@@ -39,6 +47,12 @@ namespace TangledFasteners
                 levelGenerator.GenerateLevel(currentLevel);
                 UIManager.Instance?.UpdateLevelText(currentLevel);
             }
+        }
+        public void SoundPicture()
+        {
+            Image buttonImage = buttonSound.GetComponent<Image>();
+            if(audio.mute == true) buttonImage.sprite = buttonSpriteOn;
+            else buttonImage.sprite = buttonSpriteOff;
         }
 
         public void RestartLevel()
