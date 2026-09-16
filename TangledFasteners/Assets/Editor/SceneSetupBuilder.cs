@@ -38,14 +38,34 @@ namespace TangledFasteners.Editor
             }
             dirLight.transform.rotation = Quaternion.Euler(50f, -30f, 0f);
 
-            // 2. Load Sprites and Fonts
-            Font ruslanFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/TextMesh Pro/Fonts/RuslanDisplay-Regular.ttf");
-            TMP_FontAsset ruslanFontAsset = null;
-            if (ruslanFont != null)
+            // 2. Load or Create TMP Font Asset
+            string fontAssetPath = "Assets/TextMesh Pro/Resources/Fonts & Materials/RuslanDisplay-Regular SDF.asset";
+            TMP_FontAsset ruslanFontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontAssetPath);
+            if (ruslanFontAsset == null)
             {
-                ruslanFontAsset = TMP_FontAsset.CreateFontAsset(ruslanFont);
-                ruslanFontAsset.name = "RuslanDisplay-Regular";
-                ruslanFontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+                Font ruslanFont = AssetDatabase.LoadAssetAtPath<Font>("Assets/TextMesh Pro/Fonts/RuslanDisplay-Regular.ttf");
+                if (ruslanFont != null)
+                {
+                    ruslanFontAsset = TMP_FontAsset.CreateFontAsset(ruslanFont);
+                    ruslanFontAsset.name = "RuslanDisplay-Regular SDF";
+                    AssetDatabase.CreateAsset(ruslanFontAsset, fontAssetPath);
+
+                    if (ruslanFontAsset.material != null)
+                    {
+                        ruslanFontAsset.material.name = ruslanFontAsset.name + " Material";
+                        AssetDatabase.AddObjectToAsset(ruslanFontAsset.material, ruslanFontAsset);
+                    }
+                    if (ruslanFontAsset.atlasTexture != null)
+                    {
+                        ruslanFontAsset.atlasTexture.name = ruslanFontAsset.name + " Atlas";
+                        AssetDatabase.AddObjectToAsset(ruslanFontAsset.atlasTexture, ruslanFontAsset);
+                    }
+                    AssetDatabase.SaveAssets();
+                }
+                else
+                {
+                    ruslanFontAsset = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF.asset");
+                }
             }
 
             Sprite nextButtonSprite = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/UI_Package/Casual_UI_Slicing/Win_Panel/next ibutton.png");
