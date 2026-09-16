@@ -9,6 +9,7 @@ namespace TangledFasteners
 
         [Header("Top Bar UI")]
         public Text levelText;
+        public Text movesText;
         public Button restartButton;
         public Button soundButton;
         public Text soundButtonText;
@@ -57,6 +58,14 @@ namespace TangledFasteners
             if (levelText != null)
             {
                 levelText.text = $"Уровень {level}";
+            }
+        }
+
+        public void UpdateMoveCount(int moves)
+        {
+            if (movesText != null)
+            {
+                movesText.text = $"Ходы: {moves}";
             }
         }
 

@@ -21,8 +21,8 @@ namespace TangledFasteners.Editor
                 mainCam = camObj.AddComponent<Camera>();
                 camObj.tag = "MainCamera";
             }
-            mainCam.transform.position = new Vector3(0, 0, -10f);
-            mainCam.transform.rotation = Quaternion.identity;
+            mainCam.transform.position = new Vector3(-2f, 8f, -10f);
+            mainCam.transform.rotation = Quaternion.Euler(40f, 10f, 0f);
             mainCam.orthographic = true;
             mainCam.orthographicSize = 6.5f;
             mainCam.clearFlags = CameraClearFlags.SolidColor;
@@ -82,8 +82,23 @@ namespace TangledFasteners.Editor
             uiManager.levelText = levelText;
 
             RectTransform ltRect = levelTextObj.GetComponent<RectTransform>();
-            ltRect.anchoredPosition = Vector2.zero;
-            ltRect.sizeDelta = new Vector2(300, 60);
+            ltRect.anchoredPosition = new Vector2(0, 15);
+            ltRect.sizeDelta = new Vector2(300, 40);
+
+            // Moves Text (placed below LevelText)
+            GameObject movesTextObj = new GameObject("MovesText");
+            movesTextObj.transform.SetParent(topBar.transform, false);
+            Text movesText = movesTextObj.AddComponent<Text>();
+            movesText.font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+            movesText.fontSize = 24;
+            movesText.alignment = TextAnchor.MiddleCenter;
+            movesText.color = Color.black;
+            movesText.text = "Ходы: 0";
+            uiManager.movesText = movesText;
+
+            RectTransform mtRect = movesTextObj.GetComponent<RectTransform>();
+            mtRect.anchoredPosition = new Vector2(0, -20);
+            mtRect.sizeDelta = new Vector2(300, 35);
 
             // Restart Button
             GameObject restartBtnObj = CreateButton(topBar.transform, "RestartButton", "Рестарт", new Vector2(-200, 0), new Vector2(140, 50));

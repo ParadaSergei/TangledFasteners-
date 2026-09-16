@@ -9,6 +9,7 @@ namespace TangledFasteners
         public static NutSortManager Instance { get; private set; }
 
         public List<BoltPeg> bolts = new List<BoltPeg>();
+        public int moveCount { get; private set; }
         private BoltPeg selectedBolt;
         private bool isBusy;
 
@@ -26,7 +27,9 @@ namespace TangledFasteners
         {
             isBusy = false;
             selectedBolt = null;
+            moveCount = 0;
             bolts.Clear();
+            UIManager.Instance?.UpdateMoveCount(moveCount);
         }
 
         public void OnBoltClicked(BoltPeg clickedBolt)
@@ -131,6 +134,9 @@ namespace TangledFasteners
             isBusy = true;
             HighlightBoltGroup(source, false);
             selectedBolt = null;
+
+            moveCount++;
+            UIManager.Instance?.UpdateMoveCount(moveCount);
 
             Vector3 sourceLift = source.GetLiftPosition();
             Vector3 targetLift = target.GetLiftPosition();
