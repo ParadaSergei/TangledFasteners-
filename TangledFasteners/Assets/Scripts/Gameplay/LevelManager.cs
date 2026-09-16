@@ -16,6 +16,7 @@ namespace TangledFasteners
         public AudioSource audio;
 
         public int currentLevel = 1;
+        public string currentLanguage = "ru";
 
         private void Awake()
         {
@@ -78,6 +79,26 @@ namespace TangledFasteners
         public void LoadSceneByName(string sceneName)
         {
             SceneManager.LoadScene(sceneName);
+        }
+
+        public void ChangeLanguage()
+        {
+            currentLanguage = (currentLanguage == "ru") ? "en" : "ru";
+            UIManager.Instance?.UpdateAllTexts();
+        }
+
+        public void ToggleLanguage()
+        {
+            ChangeLanguage();
+        }
+
+        public void ChangeLanguage(string lang)
+        {
+            if (lang == "ru" || lang == "en")
+            {
+                currentLanguage = lang;
+                UIManager.Instance?.UpdateAllTexts();
+            }
         }
     }
 }
