@@ -74,10 +74,12 @@ namespace TangledFasteners
             {
                 levelCompletePanel.SetActive(true);
             }
+            Time.timeScale = 0f;
         }
 
         public void HideLevelCompletePanel()
         {
+            Time.timeScale = 1f;
             if (levelCompletePanel != null)
             {
                 levelCompletePanel.SetActive(false);

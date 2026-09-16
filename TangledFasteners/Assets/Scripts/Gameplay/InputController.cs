@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 namespace TangledFasteners
@@ -19,6 +20,12 @@ namespace TangledFasteners
         {
             if (Pointer.current != null && Pointer.current.press.wasPressedThisFrame)
             {
+                // Ignore clicks on UI elements so tapping buttons doesn't select 3D objects
+                if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+                {
+                    return;
+                }
+
                 Vector2 touchPosition = Pointer.current.position.ReadValue();
                 HandleTap(touchPosition);
             }

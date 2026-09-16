@@ -27,6 +27,8 @@ namespace TangledFasteners
 
         public void LoadCurrentLevel()
         {
+            Time.timeScale = 1f;
+
             if (levelGenerator == null)
             {
                 levelGenerator = FindFirstObjectByType<LevelGenerator>();
