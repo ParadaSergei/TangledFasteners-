@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace TangledFasteners
 {
@@ -8,16 +9,22 @@ namespace TangledFasteners
         public static UIManager Instance { get; private set; }
 
         [Header("Top Bar UI")]
-        public Text levelText;
-        public Text movesText;
+        public TextMeshProUGUI levelText;
+        public TextMeshProUGUI movesText;
         public Button restartButton;
+        public Image restartButtonImage;
         public Button soundButton;
-        public Text soundButtonText;
+        public Image soundButtonImage;
+        public Sprite soundOnSprite;
+        public Sprite soundOffSprite;
+        public TextMeshProUGUI soundButtonText;
 
         [Header("Victory Popup UI")]
         public GameObject levelCompletePanel;
-        public Text winTitleText;
+        public Image winRibbonImage;
+        public TextMeshProUGUI winTitleText;
         public Button continueButton;
+        public Image continueButtonImage;
 
         private void Awake()
         {
@@ -51,6 +58,11 @@ namespace TangledFasteners
 
             if (levelCompletePanel != null)
                 levelCompletePanel.SetActive(false);
+
+            if (AudioManager.Instance != null)
+            {
+                UpdateSoundButtonUI(AudioManager.Instance.IsMuted);
+            }
         }
 
         public void UpdateLevelText(int level)
@@ -71,6 +83,18 @@ namespace TangledFasteners
 
         public void UpdateSoundButtonUI(bool isMuted)
         {
+            if (soundButtonImage != null)
+            {
+                if (isMuted && soundOffSprite != null)
+                {
+                    soundButtonImage.sprite = soundOffSprite;
+                }
+                else if (!isMuted && soundOnSprite != null)
+                {
+                    soundButtonImage.sprite = soundOnSprite;
+                }
+            }
+
             if (soundButtonText != null)
             {
                 soundButtonText.text = isMuted ? "Звук: ВЫКЛ" : "Звук: ВКЛ";
