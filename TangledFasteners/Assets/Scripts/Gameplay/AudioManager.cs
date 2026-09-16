@@ -28,7 +28,6 @@ namespace TangledFasteners
                 return;
             }
             Instance = this;
-            DontDestroyOnLoad(gameObject);
 
             if (audioSource == null)
             {

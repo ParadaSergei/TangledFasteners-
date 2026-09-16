@@ -31,13 +31,22 @@ namespace TangledFasteners
         private void Start()
         {
             if (restartButton != null)
+            {
+                restartButton.onClick.RemoveAllListeners();
                 restartButton.onClick.AddListener(OnRestartClicked);
+            }
 
             if (soundButton != null)
+            {
+                soundButton.onClick.RemoveAllListeners();
                 soundButton.onClick.AddListener(OnSoundToggleClicked);
+            }
 
             if (continueButton != null)
+            {
+                continueButton.onClick.RemoveAllListeners();
                 continueButton.onClick.AddListener(OnContinueClicked);
+            }
 
             if (levelCompletePanel != null)
                 levelCompletePanel.SetActive(false);
