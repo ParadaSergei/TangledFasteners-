@@ -123,6 +123,14 @@ namespace TangledFasteners.Editor
             uiManager.continueButton = continueBtnObj.GetComponent<Button>();
             uiManager.levelCompletePanel = winPanel;
 
+            // Event System for UI interactions
+            if (Object.FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() == null)
+            {
+                GameObject esObj = new GameObject("EventSystem");
+                esObj.AddComponent<UnityEngine.EventSystems.EventSystem>();
+                esObj.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+            }
+
             // Generate first level
             gen.GenerateLevel(1);
 
