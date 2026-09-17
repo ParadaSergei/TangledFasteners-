@@ -35,6 +35,32 @@ namespace TangledFasteners
             }
         }
 
+        private void OnEnable()
+        {
+            YG.YG2.onPauseGame += OnPauseGame;
+        }
+
+        private void OnDisable()
+        {
+            YG.YG2.onPauseGame -= OnPauseGame;
+        }
+
+        private void OnPauseGame(bool pause)
+        {
+            AudioListener.pause = pause;
+            if (audioSource != null)
+            {
+                if (pause)
+                {
+                    audioSource.Pause();
+                }
+                else
+                {
+                    audioSource.UnPause();
+                }
+            }
+        }
+
         public void ToggleSound()
         {
             IsMuted = !IsMuted;
