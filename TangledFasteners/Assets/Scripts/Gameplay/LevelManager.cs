@@ -35,24 +35,30 @@ namespace TangledFasteners
             LoadCurrentLevel();
         }
 
+#if UNITY_WEBGL && !UNITY_EDITOR
+        [System.Runtime.InteropServices.DllImport("__Internal")]
+        private static extern string GetYandexLanguage_js();
+#endif
+
         private void DetectLanguage()
         {
-            // Check system language or SDK language
-            string sysLang = Application.systemLanguage.ToString().ToLower();
-            if (sysLang.Contains("russian") || sysLang == "ru")
-            {
-                currentLanguage = "ru";
-            }
-            else if (sysLang.Contains("belarusian") || sysLang.Contains("ukrainian") || sysLang.Contains("kazakh"))
-            {
-                currentLanguage = "ru";
-            }
-            else
-            {
-                currentLanguage = "en";
-            }
+            string detectedLang = "ru";
 
-            // Also check YG2 lang if YG2 environment or localization is available
+#if UNITY_WEBGL && !UNITY_EDITOR
+            try
+            {
+                string sdkLang = GetYandexLanguage_js();
+                if (!string.IsNullOrEmpty(sdkLang))
+                {
+                    detectedLang = sdkLang.ToLower();
+                }
+            }
+            catch
+            {
+                detectedLang = Application.systemLanguage.ToString().ToLower();
+            }
+#else
+            detectedLang = Application.systemLanguage.ToString().ToLower();
             try
             {
                 var field = typeof(YG.YG2).GetField("lang", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
@@ -61,11 +67,23 @@ namespace TangledFasteners
                     string ygLang = field.GetValue(null) as string;
                     if (!string.IsNullOrEmpty(ygLang))
                     {
-                        currentLanguage = ygLang.ToLower() == "ru" ? "ru" : "en";
+                        detectedLang = ygLang.ToLower();
                     }
                 }
             }
             catch { }
+#endif
+
+            if (detectedLang.StartsWith("ru") || detectedLang.Contains("russian") ||
+                detectedLang.StartsWith("be") || detectedLang.StartsWith("uk") ||
+                detectedLang.StartsWith("kk") || detectedLang.StartsWith("uz"))
+            {
+                currentLanguage = "ru";
+            }
+            else
+            {
+                currentLanguage = "en";
+            }
 
             UIManager.Instance?.UpdateAllTexts();
         }
