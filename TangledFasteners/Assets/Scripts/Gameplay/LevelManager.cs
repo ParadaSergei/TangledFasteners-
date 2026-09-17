@@ -31,7 +31,43 @@ namespace TangledFasteners
         private void Start()
         {
             audio = gameObject.GetComponent<AudioSource>();
+            DetectLanguage();
             LoadCurrentLevel();
+        }
+
+        private void DetectLanguage()
+        {
+            // Check system language or SDK language
+            string sysLang = Application.systemLanguage.ToString().ToLower();
+            if (sysLang.Contains("russian") || sysLang == "ru")
+            {
+                currentLanguage = "ru";
+            }
+            else if (sysLang.Contains("belarusian") || sysLang.Contains("ukrainian") || sysLang.Contains("kazakh"))
+            {
+                currentLanguage = "ru";
+            }
+            else
+            {
+                currentLanguage = "en";
+            }
+
+            // Also check YG2 lang if YG2 environment or localization is available
+            try
+            {
+                var field = typeof(YG.YG2).GetField("lang", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static);
+                if (field != null)
+                {
+                    string ygLang = field.GetValue(null) as string;
+                    if (!string.IsNullOrEmpty(ygLang))
+                    {
+                        currentLanguage = ygLang.ToLower() == "ru" ? "ru" : "en";
+                    }
+                }
+            }
+            catch { }
+
+            UIManager.Instance?.UpdateAllTexts();
         }
 
         public void LoadCurrentLevel()
