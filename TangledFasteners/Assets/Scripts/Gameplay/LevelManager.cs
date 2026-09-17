@@ -73,7 +73,9 @@ namespace TangledFasteners
             LoadCurrentLevel();
             UIManager.Instance?.HideLevelCompletePanel();
 
+#if InterstitialAdv_yg
             YG.YG2.InterstitialAdvShow();
+#endif
 
             isChangingLevel = false;
         }
